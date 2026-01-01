@@ -1,7 +1,7 @@
 name: Deploy Fabric Accelerator
 on: workflow_dispatch 
 env:
-  FABRIC_CAPACITY_NAME: edkcapacity
+  FABRIC_CAPACITY_NAME: edkcapacity2
   FABRIC_CAPACITY_LOCATION: westeurope
   FABRIC_CAPACITY_SKU: F2
   FABRIC_CAPACITY_ADMIN_ID: ad9ca5b2-1ba1-4c8c-ae57-c640387f279c

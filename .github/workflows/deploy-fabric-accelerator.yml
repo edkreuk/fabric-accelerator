@@ -170,7 +170,93 @@ jobs:
               if [ "$GoldDWExists" != "*true" ]; then
                 fab create $WORKSPACE_NAME.Workspace/warehouse.Folder/$GOLD_DW.Warehouse
               fi
-        #   
+        #Replace OLD IDs with NEW IDs in workspace files
+        - name: Replace OLD IDs with NEW IDs in workspace files
+          run: |
+              NEW_FABRIC_CAPACITY_ID=$(fab get $WORKSPACE_NAME.Workspace -q capacityId | tr -d '\r')
+              echo "NEW_FABRIC_CAPACITY_ID=$NEW_FABRIC_CAPACITY_ID" >> $GITHUB_ENV
+             
+              NEW_FABRIC_WORKSPACE_ID=$(fab get $WORKSPACE_NAME.Workspace -q id | tr -d '\r')
+              echo "NEW_FABRIC_WORKSPACE_ID=$NEW_FABRIC_WORKSPACE_ID" >> $GITHUB_ENV
+             
+              NEW_CONTROLDB_NAME=$(fab get $WORKSPACE_NAME.Workspace/$FABRIC_SQL_DB_NAME.SQLDatabase -q properties.databaseName -f | tr -d '\r')
+              echo "NEW_CONTROLDB_NAME=$NEW_CONTROLDB_NAME" >> $GITHUB_ENV
+             
+              NEW_CONTROLDB_CONNECTION_ID=$(fab get .connections/"${WORKSPACE_NAME}-${FABRIC_SQL_DB_NAME}".Connection -q id | tr -d '\r')
+              echo "NEW_CONTROLDB_CONNECTION_ID=$NEW_CONTROLDB_CONNECTION_ID" >> $GITHUB_ENV
+             
+              NEW_BRONZE_LH_ID=$(fab get $WORKSPACE_NAME.Workspace/$BRONZE_LH.Lakehouse -q id | tr -d '\r')
+              echo "NEW_BRONZE_LH_ID=$NEW_BRONZE_LH_ID" >> $GITHUB_ENV
+             
+              NEW_SILVER_LH_ID=$(fab get $WORKSPACE_NAME.Workspace/$SILVER_LH.Lakehouse -q id | tr -d '\r')
+              echo "NEW_SILVER_LH_ID=$NEW_SILVER_LH_ID" >> $GITHUB_ENV
+             
+              NEW_GOLD_DW_ID=$(fab get $WORKSPACE_NAME.Workspace/$GOLD_DW.Warehouse -q id | tr -d '\r')
+              echo "NEW_GOLD_DW_ID=$NEW_GOLD_DW_ID" >> $GITHUB_ENV
+
+              echo "Replacing OLD ID with NEW ID in workspace files"
+              grep --null -rl "$OLD_CONTROLDB_NAME" "${GITHUB_WORKSPACE}/workspace" | tr '\0' '\n'
+              grep --null -rl $OLD_CONTROLDB_NAME ${GITHUB_WORKSPACE}/workspace | xargs -0 sed -i "s/$OLD_CONTROLDB_NAME/$NEW_CONTROLDB_NAME/g"
+
+              echo "Files to be updated from $OLD_FABRIC_CAPACITY_ID to $NEW_FABRIC_CAPACITY_ID"
+              grep --null -rl "$OLD_FABRIC_CAPACITY_ID" "${GITHUB_WORKSPACE}/workspace" | tr '\0' '\n'
+              grep --null -rl $OLD_FABRIC_CAPACITY_ID ${GITHUB_WORKSPACE}/workspace | xargs -0 sed -i "s/$OLD_FABRIC_CAPACITY_ID/$NEW_FABRIC_CAPACITY_ID/g"
+
+              echo "Files to be updated from $OLD_FABRIC_WORKSPACE_ID to $NEW_FABRIC_WORKSPACE_ID"
+              grep --null -rl "$OLD_FABRIC_WORKSPACE_ID" "${GITHUB_WORKSPACE}/workspace" | tr '\0' '\n'
+              grep --null -rl $OLD_FABRIC_WORKSPACE_ID ${GITHUB_WORKSPACE}/workspace | xargs -0 sed -i "s/$OLD_FABRIC_WORKSPACE_ID/$NEW_FABRIC_WORKSPACE_ID/g"
+
+              echo "Files to be updated from $OLD_FABRIC_WORKSPACE_ID1 to $NEW_FABRIC_WORKSPACE_ID"
+              grep --null -rl "$OLD_FABRIC_WORKSPACE_ID1" "${GITHUB_WORKSPACE}/workspace" | tr '\0' '\n'
+              grep --null -rl $OLD_FABRIC_WORKSPACE_ID1 ${GITHUB_WORKSPACE}/workspace | xargs -0 sed -i "s/$OLD_FABRIC_WORKSPACE_ID1/$NEW_FABRIC_WORKSPACE_ID/g"
+
+              echo "Files to be updated from $OLD_CONTROLDB_NAME to $NEW_CONTROLDB_NAME"
+
+              echo "Files to be updated from $OLD_CONTROLDB_CONNECTION_ID to $NEW_CONTROLDB_CONNECTION_ID"
+              grep --null -rl "$OLD_CONTROLDB_CONNECTION_ID" "${GITHUB_WORKSPACE}/workspace" | tr '\0' '\n'
+              grep --null -rl $OLD_CONTROLDB_CONNECTION_ID ${GITHUB_WORKSPACE}/workspace | xargs -0 sed -i "s/$OLD_CONTROLDB_CONNECTION_ID/$NEW_CONTROLDB_CONNECTION_ID/g"
+
+              echo "Files to be updated from $OLD_BRONZE_LH_ID to $NEW_BRONZE_LH_ID"
+              grep --null -rl "$OLD_BRONZE_LH_ID" "${GITHUB_WORKSPACE}/workspace" | tr '\0' '\n'
+              grep --null -rl $OLD_BRONZE_LH_ID ${GITHUB_WORKSPACE}/workspace | xargs -0 sed -i "s/$OLD_BRONZE_LH_ID/$NEW_BRONZE_LH_ID/g"
+
+              echo "Files to be updated from $OLD_SILVER_LH_ID to $NEW_SILVER_LH_ID"
+              grep --null -rl "$OLD_SILVER_LH_ID" "${GITHUB_WORKSPACE}/workspace" | tr '\0' '\n'
+              grep --null -rl $OLD_SILVER_LH_ID ${GITHUB_WORKSPACE}/workspace | xargs -0 sed -i "s/$OLD_SILVER_LH_ID/$NEW_SILVER_LH_ID/g"
+
+              echo "Files to be updated from $OLD_GOLD_DW_ID to $NEW_GOLD_DW_ID"
+              grep --null -rl "$OLD_GOLD_DW_ID" "${GITHUB_WORKSPACE}/workspace" | tr '\0' '\n'
+              grep --null -rl $OLD_GOLD_DW_ID ${GITHUB_WORKSPACE}/workspace | xargs -0 sed -i "s/$OLD_GOLD_DW_ID/$NEW_GOLD_DW_ID/g"
+
+              echo "Files to be updated from $OLD_WIDE_WORLD_IMPORTERS_CONNECTION_ID to $WIDE_WORLD_IMPORTERS_CONNECTION_ID"
+              grep --null -rl "$OLD_WIDE_WORLD_IMPORTERS_CONNECTION_ID" "${GITHUB_WORKSPACE}/workspace" | tr '\0' '\n'
+              grep --null -rl $OLD_WIDE_WORLD_IMPORTERS_CONNECTION_ID ${GITHUB_WORKSPACE}/workspace | xargs -0 sed -i "s/$OLD_WIDE_WORLD_IMPORTERS_CONNECTION_ID/$WIDE_WORLD_IMPORTERS_CONNECTION_ID/g"
+
+              echo "Files to be updated with new Tenant ID"
+              grep --null -rl "$OLD_TENANT_ID" "${GITHUB_WORKSPACE}/workspace" | tr '\0' '\n'
+              grep --null -rl $OLD_TENANT_ID ${GITHUB_WORKSPACE}/workspace | xargs -0 sed -i "s/$OLD_TENANT_ID/${{ secrets.TENANT_ID }}/g"
+
+              echo "Replacing OLD ID with NEW ID in ipynb files"
+
+              echo "ipynb Files to be updated from $OLD_FABRIC_WORKSPACE_ID to $NEW_FABRIC_WORKSPACE_ID"
+              grep --null -rl "$OLD_FABRIC_WORKSPACE_ID" "${GITHUB_WORKSPACE}/ipynb" | tr '\0' '\n'
+              grep --null -rl $OLD_FABRIC_WORKSPACE_ID ${GITHUB_WORKSPACE}/ipynb | xargs -0 sed -i "s/$OLD_FABRIC_WORKSPACE_ID/$NEW_FABRIC_WORKSPACE_ID/g"
+
+              echo "ipynb Files to be updated from $OLD_SILVER_LH_ID to $NEW_SILVER_LH_ID"
+              grep --null -rl "$OLD_SILVER_LH_ID" "${GITHUB_WORKSPACE}/ipynb" | tr '\0' '\n'
+              grep --null -rl $OLD_SILVER_LH_ID ${GITHUB_WORKSPACE}/ipynb | xargs -0 sed -i "s/$OLD_SILVER_LH_ID/$NEW_SILVER_LH_ID/g"
+
+              echo "ipynb Files to be updated to $BRONZE_LH"
+              grep --null -rl "lh_bronze" "${GITHUB_WORKSPACE}/ipynb" | tr '\0' '\n'
+              grep --null -rl "lh_bronze" ${GITHUB_WORKSPACE}/ipynb | xargs -0 sed -i "s/lh_bronze/$BRONZE_LH/g"
+
+              echo "ipynb Files to be updated to $SILVER_LH"
+              grep --null -rl "lh_silver" "${GITHUB_WORKSPACE}/ipynb" | tr '\0' '\n'
+              grep --null -rl "lh_silver" ${GITHUB_WORKSPACE}/ipynb | xargs -0 sed -i "s/lh_silver/$SILVER_LH/g"
+
+              echo "ipynb Files to be updated to $GOLD_DW"
+              grep --null -rl "dw_gold" "${GITHUB_WORKSPACE}/ipynb" | tr '\0' '\n'
+              grep --null -rl "dw_gold" ${GITHUB_WORKSPACE}/ipynb | xargs -0 sed -i "s/dw_gold/$GOLD_DW/g"  
 
         # Deploy Notebooks
         - name: Deploy Notebooks
